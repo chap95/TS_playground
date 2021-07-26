@@ -58,3 +58,4 @@ type testType<T> = T | never;
 // 그렇기 때문에 NonNullable 타입에 null 이나 undefined 가 들어오게 되면 컴파일 에러가 일어나게 된다.
 
 // 4. infer
+// '추론하다' 라는 뜻을 가진 키워드 이다. 타입을 추론하는데 사용한다.
