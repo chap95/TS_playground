@@ -6,6 +6,7 @@ interface Foo {
   propA: boolean;
   propB: boolean;
 }
+
 declare function f<T>(x: T): T extends Foo ? string : number;
 function foo<U>(x: U) {
   let a = f(x); // a 의 타입은 string | number 인 union type을 가지게 된다.
