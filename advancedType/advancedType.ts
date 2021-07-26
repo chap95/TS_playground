@@ -21,3 +21,19 @@ type NotNullableAddress = NotNullable<EmailAddress>;
 type NotNullableEmailAddress = NotNullable<
   string | string[] | null | undefined
 >;
+// 다음
+type NotNullableEmailAddress2 =
+  | NonNullable<string>
+  | NonNullable<string[]>
+  | NonNullable<null>
+  | NonNullable<undefined>;
+// 다음
+type NotNullableEmailAddress3 =
+  | NonNullable<string extends null | undefined ? never : string>
+  | NonNullable<string[] extends null | undefined ? never : string[]>
+  | NonNullable<null extends null | undefined ? never : null>
+  | NonNullable<undefined extends null | undefined ? never : null>;
+// 다음
+type NotNullableEmailAddress4 = string | string[] | never | never;
+// 다음
+type NotNullableEmailAddress5 = string | string[];
