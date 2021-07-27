@@ -1,0 +1,16 @@
+{
+  "name": "tsplayground",
+  "version": "1.0.0",
+  "description": "* * * 타입스크립트를 사용하면서 궁금했던 것들을 조사후     직접 사용해 보기 위한 공간입니다 :)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^16.4.3",
+    "ts-node": "^10.1.0",
+    "tslib": "^2.3.0"
+  }
+}
