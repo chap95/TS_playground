@@ -5,7 +5,7 @@ declare function funcTest<T extends boolean>(
 let x = funcTest(Math.random() < 0.5);
 // x 의 type 은 string | number 가 된다.
 console.log(x);
-interface Foo {
+interface Foo { 
   propA: boolean;
   propB: boolean;
 }
@@ -96,14 +96,42 @@ type r2 = unboxFromObjectFunctions<{
   a: (x: string) => void;
   b: (x: number) => void;
 }>; // string & number 문자열과 숫자는 교집합이 없으므로 never 타입을 얻는다.
+// 
 // 4_1 -> 공변성과 반공변성은 무엇인가?
+// -> 공변성 
+// 공변성은 type 에 SOLID 원칙 중 하나인 리스코프 치환 원칙을 적용한다는 의미다.
+// 리스코프 치환 원칙을 간단히 말하자면 '상위 타입을 사용하는 객체를 하위 타입을 사용하는 객체로 치환해도
+// 프로그램은 오류 없이 정상 동작해야한다.' 이다.
 // 일반적인 sub type 관계가 함수 인자에서는 반대로 적용된다는 의미
-type TA = { a: string };
-type TB = { a: string; b: string };
+type TA = { a: string }; // 상위 타입
+type TB = { a: string; b: string }; // 하위 타입
 
-// ta 는 tb 의 subType 이다.
+
 let ta: TA;
 let tb: TB;
+// tb 는 ta 의 subType 이다. 이 표현이 맞는지 모르겠다. super 라는 의미는 초월 or 어떠한 것을 넘어선 의미가 강한 단어라 생각한다.
+ta = tb; 
+// tb 는 ta 의 subType 이기 때문에 할당이 가능하지만 그 반대는 불가능하다. 이것이 공변성이다.
+// 잘 생각해보면 간단하다. ta 를 사용한 변수들은 a 라는 프로퍼티만 접근 가능했지만 tb 를 사용한 변수들은 b 라는 프로퍼티에도
+// 접근할 수 있다. tb 를 갑자기 ta 로 치환해 버리면 b 가 없다는 에러를 발생시킬 것이 뻔하다.
 
-ta = tb;
-// largeVar = smallVar subType 이기 때문
+// -> 반공변성
+// 리스코프 치환 원칙의 키워드는 '상위를 하위로' 이다. 
+// 반공변성은 이 반대 개념으로 생각하면 되겠다.
+type FTA<T> = (param: T) => void; // 상위
+type FTB<T> = (param: T) => void; // 하위
+
+let fta: FTA<string | number> = (x) => {
+
+}
+
+let ftb: FTB<number> = (x) => {
+
+}
+
+ftb = fta;
+// fta 의 파라미터는 union ftb 의 파라미터는 단일 타입이다.
+// fta 의 파라미터에 string 이라는 타입이 존재하기 때문에 ftb 는 string 타입에 대한 커버 능력이 없다.
+// 그렇기 때문에 fta 만 ftb 에 할당이 가능하다.
+// 상식적으로 이해는 가지 않는다. 하지만 이렇게 알아두자
+// -> 무공변성
