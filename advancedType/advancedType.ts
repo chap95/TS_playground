@@ -80,3 +80,30 @@ type R2<T> = T extends infer R ? R : number;
 // R1 과 R2 의 차이점은 무엇일까
 // R1 에 사용된 R 은 위에서 선언한 R 타입을 참조한다.
 // 하지만 R2에 사용된 R은 R2 scope 에 선언되어서 type R 과 상관없는 타입 변수가 된다.
+// 타입 추론의 다양한 case 중 다중 후보군 case
+// 공변성과 항공변성 co-variant VS contra-variant
+// 1) 공변성
+type unboxFromObject<T> = T extends { a: infer R; b: infer R } ? R : never;
+type r1 = unboxFromObject<{ a: string; b: number }>; // string | number
+// 2) 항공변성
+type unboxFromObjectFunctions<T> = T extends {
+  a: (x: infer U) => void;
+  b: (x: infer U) => void;
+}
+  ? U
+  : never;
+type r2 = unboxFromObjectFunctions<{
+  a: (x: string) => void;
+  b: (x: number) => void;
+}>; // string & number 문자열과 숫자는 교집합이 없으므로 never 타입을 얻는다.
+// 4_1 -> 공변성과 반공변성은 무엇인가?
+// 일반적인 sub type 관계가 함수 인자에서는 반대로 적용된다는 의미
+type TA = { a: string };
+type TB = { a: string; b: string };
+
+// ta 는 tb 의 subType 이다.
+let ta: TA;
+let tb: TB;
+
+ta = tb;
+// largeVar = smallVar subType 이기 때문
