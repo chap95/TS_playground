@@ -129,8 +129,12 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   ? I
   : never;
 
-type Test1<T> = T extends string ? 1 : 2;
-type Test2 = Test1<never>; // never type
+type TestOrigin<T> = T extends string ? 1 : 2;
+type TestOrigin2 = TestOrigin<never>; // never
+type Test1<T> = (T extends any ? T : never) extends string ? 1 : 2;
+type Test2 = Test1<never>; // 1
 type Test3 = never extends string ? 1 : 2; // 1
-
+type Test4 = never extends unknown ? 1 : 2;
+type Test5 = unknown extends never ? 1 : 2;
+type Test6 = never extends any ? 1 : 2;
 // 반공변성을 이용한 예제라 생각한다. 위 type 은 union -> intersection 으로 바꾸는 타입이다}
