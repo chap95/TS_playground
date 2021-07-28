@@ -1,3 +1,5 @@
+import { type } from "os";
+
 // 1. conditional type (조건부 타입)
 declare function funcTest<T extends boolean>(
   x: T
@@ -5,7 +7,7 @@ declare function funcTest<T extends boolean>(
 let x = funcTest(Math.random() < 0.5);
 // x 의 type 은 string | number 가 된다.
 console.log(x);
-interface Foo { 
+interface Foo {
   propA: boolean;
   propB: boolean;
 }
@@ -13,10 +15,12 @@ interface Foo {
 declare function testing<T>(x: T): T extends Foo ? string : number;
 function foo<U>(x: U) {
   let a = testing(x); // a 의 타입은 string | number 인 union type을 가지게 된다.
-
   let b: string | number = a; // a 가 b 에 할당이 가능한 이유는 a 의 타입이 string 또는 number 인 것은 확실하기 때문
+  // 사용이유
+  // contitional type 은 generic 과 같이 주로 사용한다.
+  // T 타입 변수에는 어떠한 타입이 올지 모르기 때문에 컴파일 단계에서 타입을 걸러내기 힘들다.
+  //
 }
-
 // 2. distributive conditional type (분배조건부 타입)
 // 검사가 이루어진 이후 날 것의 타입? 이라고 하는데 뭔소리인지?
 // 아마도 타입 검사 직후의 type을 의미하는 거 같다.
@@ -45,26 +49,12 @@ type NotNullableEmailAddress4 = string | string[] | never | never;
 // 다음
 type NotNullableEmailAddress5 = string | string[];
 // ===================================================
-// 3. never
-// never는 일반적으로 함수의 return 타입으로 사용이된다.
-// 어떤 함수의 return 타입으로 never 로 정해질 경우, 해당 함수는 절대 return 을 하지 않거나 오류를 출력한다.
-type testType<T> = T | never;
-// never 타입은 모든 타입의 subset 으로 어떤한 타입도 never 타입이 될 수가 없다.
-// 그러므로 위 testType의 타입은 T 가 된다. 한마디로 어떠한 타입들과 union 하여도 아무 의미가 없기 때문에 union 한 타입이 나온다.
-//
-// 그렇다면 이런 아무의미 없는 타입을 도대체 왜 만들어서 사용하는 것일까? 그 이유를 알아보자
-// 위에서 분배조건부 타입에서 never를 사용하여 타입을 추론하였다. 그 결과 위에서 설명한 이유로 인해 string | string[] 타입만 남게 되었다.
-// 결국에는 NotNullableEmailAddress 타입에는 string 또는 string[] 타입이 오지 않으면 컴파일 에러가 발생하게 된다.
-// 이제 감이 오는가??
-//
-// NonNullable 타입을 정의할 때 null 과 undefined 가 extends 될 수 있으면 never 타입으로 지정해 두었댜.
-// 그렇기 때문에 NonNullable 타입에 null 이나 undefined 가 들어오게 되면 컴파일 에러가 일어나게 된다.
-// ===================================================
-// 4. infer
+// 3. infer
 // '추론하다' 라는 뜻을 가진 키워드 이다. 타입을 추론하는데 사용한다.
 // 타입을 추론한다는 건 단어만 봐도 알 수 있다. 실질적으로 어떤 기능을 하는지 알아보자
 // infer 는 conditional type 에 많이 사용한다.
 // 아래의 예시를 한 번 보자
+
 type UnpackArrayType<T> = T extends (infer R)[] ? R : T;
 type T1 = UnpackArrayType<number[]>;
 type T2 = UnpackArrayType<string>;
@@ -80,6 +70,9 @@ type R2<T> = T extends infer R ? R : number;
 // R1 과 R2 의 차이점은 무엇일까
 // R1 에 사용된 R 은 위에서 선언한 R 타입을 참조한다.
 // 하지만 R2에 사용된 R은 R2 scope 에 선언되어서 type R 과 상관없는 타입 변수가 된다.
+
+// infer 키워드를 사용하면 타입 추론이 가능해진다.
+// 아래 공변성, 항공변성 예제를 보자
 // 타입 추론의 다양한 case 중 다중 후보군 case
 // 공변성과 항공변성 co-variant VS contra-variant
 // 1) 공변성
@@ -96,9 +89,9 @@ type r2 = unboxFromObjectFunctions<{
   a: (x: string) => void;
   b: (x: number) => void;
 }>; // string & number 문자열과 숫자는 교집합이 없으므로 never 타입을 얻는다.
-// 
+//
 // 4_1 -> 공변성과 반공변성은 무엇인가?
-// -> 공변성 
+// -> 공변성
 // 공변성은 type 에 SOLID 원칙 중 하나인 리스코프 치환 원칙을 적용한다는 의미다.
 // 리스코프 치환 원칙을 간단히 말하자면 '상위 타입을 사용하는 객체를 하위 타입을 사용하는 객체로 치환해도
 // 프로그램은 오류 없이 정상 동작해야한다.' 이다.
@@ -106,32 +99,38 @@ type r2 = unboxFromObjectFunctions<{
 type TA = { a: string }; // 상위 타입
 type TB = { a: string; b: string }; // 하위 타입
 
-
 let ta: TA;
 let tb: TB;
 // tb 는 ta 의 subType 이다. 이 표현이 맞는지 모르겠다. super 라는 의미는 초월 or 어떠한 것을 넘어선 의미가 강한 단어라 생각한다.
-ta = tb; 
+ta = tb;
 // tb 는 ta 의 subType 이기 때문에 할당이 가능하지만 그 반대는 불가능하다. 이것이 공변성이다.
 // 잘 생각해보면 간단하다. ta 를 사용한 변수들은 a 라는 프로퍼티만 접근 가능했지만 tb 를 사용한 변수들은 b 라는 프로퍼티에도
 // 접근할 수 있다. tb 를 갑자기 ta 로 치환해 버리면 b 가 없다는 에러를 발생시킬 것이 뻔하다.
 
 // -> 반공변성
-// 리스코프 치환 원칙의 키워드는 '상위를 하위로' 이다. 
+// 리스코프 치환 원칙의 키워드는 '상위를 하위로' 이다.
 // 반공변성은 이 반대 개념으로 생각하면 되겠다.
 type FTA<T> = (param: T) => void; // 상위
 type FTB<T> = (param: T) => void; // 하위
 
-let fta: FTA<string | number> = (x) => {
+let fta: FTA<string | number> = (x) => {};
 
-}
-
-let ftb: FTB<number> = (x) => {
-
-}
+let ftb: FTB<number> = (x) => {};
 
 ftb = fta;
 // fta 의 파라미터는 union ftb 의 파라미터는 단일 타입이다.
 // fta 의 파라미터에 string 이라는 타입이 존재하기 때문에 ftb 는 string 타입에 대한 커버 능력이 없다.
 // 그렇기 때문에 fta 만 ftb 에 할당이 가능하다.
 // 상식적으로 이해는 가지 않는다. 하지만 이렇게 알아두자
-// -> 무공변성
+
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+  k: infer I
+) => void
+  ? I
+  : never;
+
+type Test1<T> = T extends string ? 1 : 2;
+type Test2 = Test1<never>; // never type
+type Test3 = never extends string ? 1 : 2; // 1
+
+// 반공변성을 이용한 예제라 생각한다. 위 type 은 union -> intersection 으로 바꾸는 타입이다}
