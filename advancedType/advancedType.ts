@@ -1,4 +1,4 @@
-import { type } from "os";
+
 
 // 1. conditional type (조건부 타입)
 declare function funcTest<T extends boolean>(
