@@ -10,7 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^16.4.3",
-    "ts-node": "^10.1.0",
+    "ts-node": "^10.2.1",
     "tslib": "^2.3.0"
   }
 }
