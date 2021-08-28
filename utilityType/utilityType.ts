@@ -1,3 +1,6 @@
+
+// partial
+
 interface ISample {
   title: string;
   content: string;
@@ -42,3 +45,24 @@ const author1: AuthorInfo = {
   name: "신인작가",
   homeTown: "서울",
 };
+
+// required
+
+interface IPerson {
+  name: string;
+  age: number;
+  phone?: string;
+  address?: string;
+}
+
+const somePerson: IPerson = {
+  name: 'hong gil dong',
+  age: 25,
+}
+
+const somePerson2: Required<IPerson> = {
+  name: 'go gil dong',
+  age: 40,
+  phone: '01012341234',
+  address: '서울시 성북구 어딘가',
+}

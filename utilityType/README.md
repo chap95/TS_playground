@@ -1,5 +1,7 @@
 # utility type
 
+유틸리티 타입 중 사용할 수 있는 몇 가지를 정리했다.
+
 ---
 
 ### Partial
@@ -8,7 +10,7 @@
  Partial<T>
 ```
 
-위와 같이 사용하면 T type 에 오는 모든 속성은 optional 하게 사용이 가능하다.
+위와 같이 사용하면 T type 에 오는 모든 속성은 optional 하게 사용이 가능하다. optional 하지 않은 속성도 optional 하게 사용이 가능
 
 아래 예제를 참고해보자
 
@@ -65,3 +67,65 @@ const sample1 = updateSample(proto, {
   content: "sample 입니다.",
 });
 ```
+
+---
+
+### Reauired
+
+Partial 의 반대 개념이다. 모든 속성을 무조건 사용해야한다.
+
+```
+Required<T>
+```
+
+아래 예제를 살펴보자
+
+```typescript
+interface ISample {
+  name?: string;
+  phone?: number;
+}
+
+const somePerson: ISample = {
+  name: "james",
+};
+
+const somePerson2: Required<ISample> = {
+  name: "brian",
+}; // error
+```
+
+---
+
+### Pick
+
+Pick 타입은 특정 타입의 속성을 몇 가지만 골라 사용할 수 있는 타입이다.
+
+```
+Pick<Type, Keys>
+// keys = 'a' | 'b'
+```
+
+Pick 은 다음과 같은 경우에 사용할 수 있다.
+
+```typescript
+interface ITodo = {
+  title: string;
+  desription: string;
+  completed: boolean;
+  createDate: string;
+}
+
+type TodoPreview = Pick<ITodo, 'title' | 'completed'>
+
+const myTodo: TodoPreview = {
+  title: '세탁소 가기',
+  completed: false,
+}
+```
+
+---
+
+### Omit
+
+Omit 타입은 Pick 타입의 반대개념이다.
