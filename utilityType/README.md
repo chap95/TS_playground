@@ -129,3 +129,27 @@ const myTodo: TodoPreview = {
 ### Omit
 
 Omit 타입은 Pick 타입의 반대개념이다.
+
+```
+Omit<T, keys>
+```
+
+사용할 타입을 정하고 해당 타입에 존재하는 속성을 keys에 넣어주면 해당 속성을 제외한 type을 사용할 수 있다.
+
+```typescript
+interface ITodo {
+  title: string;
+  description: string;
+  completed: boolean;
+  createdAt: string;
+}
+
+type TodoPreview = Omit<ITodo, "createdAt" | "description">;
+
+const todoPreview1: TodoPreview = {
+  title: "TODO",
+  completed: false,
+}; // no error
+```
+
+제외해야할 타입의 수 가 적다면 Pick 보다 Omit 타입을 사용하면 좋을 것 같다.

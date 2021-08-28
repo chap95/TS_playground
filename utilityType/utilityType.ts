@@ -66,3 +66,27 @@ const somePerson2: Required<IPerson> = {
   phone: '01012341234',
   address: '서울시 성북구 어딘가',
 }
+
+// pick & omit
+
+interface ICoffee {
+  originArea: string;
+  bitter: number;
+  sweet: number;
+  body: number;
+}
+
+
+type DegreeOfBitter = Pick<ICoffee, "originArea" | "bitter">;
+type TastyOfCoffee = Omit<ICoffee, "originArea">;
+
+const smapleCoffee: DegreeOfBitter = {
+  originArea: 'kenya',
+  bitter: 5,
+}
+
+const tastyOfKenya: TastyOfCoffee = {
+  bitter: 5,
+  sweet: 10,
+  body: 3,
+}
