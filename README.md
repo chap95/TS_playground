@@ -43,3 +43,6 @@ npx ts-node [filename]
 ### 3. [utilityType]()
 
 - partial
+- required
+- pick
+- omit
